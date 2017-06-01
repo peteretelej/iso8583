@@ -2,6 +2,8 @@ package iso8583
 
 import (
 	"fmt"
+	"io"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -22,4 +24,27 @@ func WebServer(listenAddr string) (*http.Server, error) {
 		MaxHeaderBytes: 1 << 20,
 	}
 	return svr, nil
+}
+
+// Listen returns a tcp server listening on a specified address
+func Listen(listenAddr string) error {
+	l, err := net.Listen("tcp", listenAddr)
+	if err != nil {
+		return err
+	}
+	var timeout = time.Minute * 5
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			return err
+		}
+		go handleListenConnection(conn, time.Now().Add(timeout))
+	}
+}
+
+// simply an echo server atm
+func handleListenConnection(conn net.Conn, deadline time.Time) {
+	defer conn.Close()
+	conn.SetDeadline(deadline) // r+w deadline
+	io.Copy(conn, conn)
 }
