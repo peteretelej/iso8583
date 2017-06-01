@@ -44,7 +44,7 @@ func Listen(listenAddr string) error {
 
 // simply an echo server atm
 func handleListenConnection(conn net.Conn, deadline time.Time) {
-	defer conn.Close()
-	conn.SetDeadline(deadline) // r+w deadline
-	io.Copy(conn, conn)
+	defer func() { _ = conn.Close() }()
+	_ = conn.SetDeadline(deadline) // r+w deadline
+	_, _ = io.Copy(conn, conn)
 }
