@@ -19,7 +19,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := iso8583.Serve(*listen); err != nil {
+	svr, err := iso8583.WebServer(*listen)
+	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("launching web server at %s", *listen)
+	log.Fatal(svr.ListenAndServe())
+
 }
