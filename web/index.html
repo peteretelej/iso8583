@@ -8,18 +8,27 @@
 	</head>
 	<body>
 		<div class="container">
-			<nav class="navbar">
+			<div class="navbar">
 				<a class="navbar-brand" href="/">ISO8583 Message Parser</a>
-			</nav>
+			</div>
 
-			<form >
-				<div class="form-group">
-					<label for="msg">
-						<textarea id="msg" style="width:400px;height:4em"
-			 placeholder="Raw Message"	></textarea>
-				</div><!--/.form-group-->
-				<button class="btn btn-primary" type="submit">Parse Message</button>
-			</form>
+
+			<div id="app">
+				<div class="row">
+					<div class="nav nav-pills">
+						<a class="nav-item" href="#bitmap">Bitmap->Binary</a>
+					</div>
+				</div><!--/.row-->
+				<form id="bitmap" name="bitmap" method="post">
+					<input type="hidden" name="form" value="bitmap">
+					<div class="form-group">
+						<label for="msg">
+							<textarea id="msg" name="msg" style="width:400px;height:4em"
+				     placeholder="Raw Message"></textarea>
+					</div><!--/.form-group-->
+					<button class="btn btn-primary" type="submit">Parse Message</button>
+				</form>
+			</div>
 		</div><!--/.container-->
 	</body>
 </html>

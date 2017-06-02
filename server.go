@@ -17,6 +17,9 @@ func WebServer(listenAddr string) (*http.Server, error) {
 	}
 	fs := http.FileServer(http.Dir("web"))
 	http.Handle("/", fs)
+
+	api := API{}
+	http.Handle("/api", api)
 	svr := &http.Server{
 		Addr:           listenAddr,
 		ReadTimeout:    time.Minute,
@@ -47,4 +50,28 @@ func handleListenConnection(conn net.Conn, deadline time.Time) {
 	defer func() { _ = conn.Close() }()
 	_ = conn.SetDeadline(deadline) // r+w deadline
 	_, _ = io.Copy(conn, conn)
+}
+
+// API handles API requests
+type API struct{}
+
+// APIResponse defines the structure of API responses
+type APIResponse struct {
+	Code    int
+	Status  string
+	Message string
+	Data    interface{}
+}
+
+func (aresp *APIResponse) render(w http.ResponseWriter) {
+	if aresp == nil {
+		aresp = &APIResponse{
+			Code: http.StatusServiceUnavailable,
+		}
+	}
+	//TODO: write api (ajax) response
+}
+
+func (a API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//TODO: create new apiresponse, fetch data & render
 }
