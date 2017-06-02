@@ -5,30 +5,49 @@
 		<title>ISO8583 Message Parser</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<link rel="stylesheet" href="/css/bootstrap.min.css">
+		<script src="/js/vue.js"></script>
 	</head>
 	<body>
-		<div class="container">
-			<div class="navbar">
-				<a class="navbar-brand" href="/">ISO8583 Message Parser</a>
-			</div>
+		<div class="navbar">
+			<a class="navbar-brand" href="/">ISO8583 Message Parser</a>
+		</div>
 
 
-			<div id="app">
-				<div class="row">
-					<div class="nav nav-pills">
-						<a class="nav-item" href="#bitmap">Bitmap->Binary</a>
-					</div>
-				</div><!--/.row-->
+
+		<div id="app">
+
+			<div class="container" style="margin-bottom:30px">
+				<ul class="nav nav-pills">
+					<li class="nav-item">
+						<a class="nav-link active" href="#bitmap">Bitmap->Binary</a>
+					</li>
+				</ul>
+			</div><!--/.container-->
+			<div class="container" v-if="form==='bitmap'">
 				<form id="bitmap" name="bitmap" method="post">
 					<input type="hidden" name="form" value="bitmap">
-					<div class="form-group">
-						<label for="msg">
-							<textarea id="msg" name="msg" style="width:400px;height:4em"
-				     placeholder="Raw Message"></textarea>
-					</div><!--/.form-group-->
+					<div class="row">
+						<div class="form-group">
+							<label for="msg">
+								<textarea id="msg" name="msg" style="width:400px;height:4em"
+				      placeholder="Bitmap" required></textarea>
+						</div><!--/.form-group-->
+					</div>
 					<button class="btn btn-primary" type="submit">Parse Message</button>
 				</form>
-			</div>
-		</div><!--/.container-->
+			</div><!--/.container-->
+
+			<div id="result" v-if="result">
+				<div class="container" style="margin-top:30px;">
+					<div class="card">
+						<div class="card-block">
+							<h6 class="card-subtitle text-muted" style="margin-bottom:15px">Result</h6>
+							<div class="card-text">{{result}}</div>
+						</div><!--/.card-block-->
+					</div><!--/.card-->
+				</div><!--/.container-->
+			</div><!--/#result-->
+		</div>
+		<script src="/js/main.js"></script>
 	</body>
 </html>
