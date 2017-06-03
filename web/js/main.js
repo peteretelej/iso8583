@@ -2,7 +2,8 @@ var app = new Vue({
 	el: "#app",
 	data: {
 		activeform: "",
-		result:""
+		value:"",
+		result:"",
 	},
 	computed: {
 		form: function(){
@@ -10,6 +11,40 @@ var app = new Vue({
 				return 'bitmap'
 			}
 			return this.activeform
+		},
+		placeholder:function(){
+			switch(this.activeform){
+				case "bitmap":
+				case "":
+					return "Enter Bitmap"
+			}
+		}
+
+	},
+	methods: {
+		bitmapToBinary: function(){
+			newResult("(fetching result...)")
+			axios.get("/api/bitmaptobin",{
+				params:{
+					msg: this.value
+				}
+			})
+				.then(function(response){
+					newResult(response.data.data.Result)
+				})
+				.catch(function(error){
+					console.log(error)
+					if (error.data===undefined){
+						newResult("Oops! something went wrong. Confirm the value you submitted, must be hex.")
+						return
+					}
+					newResult("Error: "+ error.data.response)
+				})
+
 		}
 	}
 })
+
+function newResult(result){
+	app.result = result
+}

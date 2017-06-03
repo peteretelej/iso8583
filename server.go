@@ -1,12 +1,14 @@
 package iso8583
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -19,7 +21,7 @@ func WebServer(listenAddr string) (*http.Server, error) {
 	http.Handle("/", fs)
 
 	api := API{}
-	http.Handle("/api", api)
+	http.Handle("/api/", api)
 	svr := &http.Server{
 		Addr:           listenAddr,
 		ReadTimeout:    time.Minute,
@@ -57,21 +59,82 @@ type API struct{}
 
 // APIResponse defines the structure of API responses
 type APIResponse struct {
-	Code    int
-	Status  string
-	Message string
-	Data    interface{}
+	Code     int         `json:"code"`
+	Err      bool        `json:"error"`
+	Response string      `json:"response"`
+	Data     interface{} `json:"data"`
 }
 
-func (aresp *APIResponse) render(w http.ResponseWriter) {
-	if aresp == nil {
-		aresp = &APIResponse{
+func (a APIResponse) render(w http.ResponseWriter) {
+	if a == (APIResponse{}) {
+		a = APIResponse{
+			Err:  true,
 			Code: http.StatusServiceUnavailable,
 		}
 	}
-	//TODO: write api (ajax) response
+	if a.Code == 0 && a.Err != false {
+		a.Code = http.StatusInternalServerError
+	}
+	if a.Code == 0 {
+		a.Code = http.StatusOK
+	}
+	if a.Response == "" {
+		a.Response = http.StatusText(a.Code)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	dat, err := json.Marshal(a)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, `{"code":500,"error":"Internal Server Error"}`)
+		return
+	}
+	w.WriteHeader(a.Code)
+	_, _ = w.Write(dat)
+
 }
 
 func (a API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	//TODO: create new apiresponse, fetch data & render
+	ares := APIResponse{}
+	path := strings.TrimLeft(r.URL.Path, "/api/")
+	if strings.TrimSpace(path) == "" {
+		ares.Code = http.StatusBadRequest
+		ares.render(w)
+		return
+
+	}
+	parts := strings.Split(path, "/")
+	var resource, entity string
+	resource = parts[0]
+	if len(parts) > 1 {
+		entity = parts[1]
+	}
+	_ = entity // TODO: use entity for optional api param
+	switch resource {
+	case "bitmaptobin":
+		bitmap := r.FormValue("msg")
+		if bitmap == "" {
+			ares.Code = http.StatusBadRequest
+			ares.Response = "missing bitmap value in form field msg"
+			ares.render(w)
+			return
+		}
+		bin, err := BitmapToBinary(bitmap)
+		if err != nil {
+			ares.Code = http.StatusBadRequest
+			ares.Response = "invalid bitmap provided, not in hexadecimal"
+			ares.render(w)
+			return
+		}
+		ares.Code = http.StatusOK
+		ares.Data = struct {
+			Value, Result string
+		}{bitmap, bin}
+		ares.render(w)
+		return
+	default:
+		ares.Code = http.StatusServiceUnavailable
+		ares.render(w)
+		return
+	}
+
 }

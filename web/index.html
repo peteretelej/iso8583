@@ -6,10 +6,13 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<link rel="stylesheet" href="/css/bootstrap.min.css">
 		<script src="/js/vue.js"></script>
+		<script src="/js/axios.min.js"></script>
 	</head>
 	<body>
-		<div class="navbar">
-			<a class="navbar-brand" href="/">ISO8583 Message Parser</a>
+		<div class="container" style="margin-bottom:30px;">
+			<div class="navbar navbar-inverse bg-inverse">
+				<a class="navbar-brand" href="/">ISO8583 Message Parser</a>
+			</div>
 		</div>
 
 
@@ -19,22 +22,22 @@
 			<div class="container" style="margin-bottom:30px">
 				<ul class="nav nav-pills">
 					<li class="nav-item">
-						<a class="nav-link active" href="#bitmap">Bitmap->Binary</a>
+						<a class="nav-link active" v-on:click="activeform='bitmap'"
+	 href="#bitmap">Bitmap->Binary</a>
 					</li>
 				</ul>
 			</div><!--/.container-->
 			<div class="container" v-if="form==='bitmap'">
-				<form id="bitmap" name="bitmap" method="post">
+				<form v-on:submit.prevent="bitmapToBinary">
 					<input type="hidden" name="form" value="bitmap">
-					<div class="row">
 						<div class="form-group">
 							<label for="msg">
 								<textarea id="msg" name="msg" style="width:400px;height:4em"
-				      placeholder="Bitmap" required></textarea>
+				      v-bind:placeholder="placeholder" v-model="value" required></textarea>
 						</div><!--/.form-group-->
-					</div>
-					<button class="btn btn-primary" type="submit">Parse Message</button>
+					<button class="btn btn-primary" type="submit">Parse</button>
 				</form>
+
 			</div><!--/.container-->
 
 			<div id="result" v-if="result">
@@ -42,7 +45,7 @@
 					<div class="card">
 						<div class="card-block">
 							<h6 class="card-subtitle text-muted" style="margin-bottom:15px">Result</h6>
-							<div class="card-text">{{result}}</div>
+							<div class="card-text" style="overflow-wrap:break-word">{{result}}</div>
 						</div><!--/.card-block-->
 					</div><!--/.card-->
 				</div><!--/.container-->
