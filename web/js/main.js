@@ -35,12 +35,11 @@ var app = new Vue({
 					newResult(response.data.data.Result)
 				})
 				.catch(function(error){
-					console.log(error)
-					if (error.data===undefined){
+					if (error.response.data.response===undefined){
 						newResult("Oops! something went wrong. Confirm the value you submitted, must be hex bitmap.")
 						return
 					}
-					newResult("Error: "+ error.data.response)
+					newResult("Error: "+ error.response.data.response+".")
 				})
 
 		}
