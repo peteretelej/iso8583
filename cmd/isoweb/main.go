@@ -12,7 +12,7 @@ var (
 	socket = flag.Bool("socket", false, "starts a listener on a socket")
 
 	// server flags
-	dir    = flag.String("dir", "../..", "directory to server from")
+	dir    = flag.String("dir", "../../web", "directory containing web static assets")
 	listen = flag.String("listen", ":8080", "http server listen address")
 )
 

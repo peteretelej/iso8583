@@ -7,17 +7,16 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 )
 
 // WebServer returns a http web server that interprets ISO8583 messages
 func WebServer(listenAddr string) (*http.Server, error) {
-	if _, err := os.Stat(filepath.Join("web", "index.html")); err != nil {
-		return nil, fmt.Errorf("missing web/ folder with index.html in launch directory")
+	if _, err := os.Stat("index.html"); err != nil {
+		return nil, fmt.Errorf("missing web assets (index.html) in launch directory (--dir)")
 	}
-	fs := http.FileServer(http.Dir("web"))
+	fs := http.FileServer(http.Dir("."))
 	http.Handle("/", fs)
 
 	api := API{}
