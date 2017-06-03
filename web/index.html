@@ -27,15 +27,15 @@
 					</li>
 				</ul>
 			</div><!--/.container-->
-			<div class="container" v-if="form==='bitmap'">
-				<form v-on:submit.prevent="bitmapToBinary">
+			<div class="container" v-if="activeform==='bitmap'">
+				<form v-on:submit.prevent>
 					<input type="hidden" name="form" value="bitmap">
-						<div class="form-group">
-							<label for="msg">
-								<textarea id="msg" name="msg" style="width:400px;height:4em"
-				      v-bind:placeholder="placeholder" v-model="value" required></textarea>
-						</div><!--/.form-group-->
-					<button class="btn btn-primary" type="submit">Parse</button>
+					<div class="form-group">
+						<label for="msg">{{formtitle}}</label>
+						<input type="text" class="form-control" id="msg" name="msg" style="width:60%"
+								  v-bind:placeholder="placeholder" v-model="value" required>
+					</div><!--/.form-group-->
+					<button type="submit" class="btn btn-primary" v-on:click="bitmapToBinary">Convert</button>
 				</form>
 
 			</div><!--/.container-->
